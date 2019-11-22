@@ -17,7 +17,7 @@ class SetPage(QtWidgets.QMainWindow, SetPage.Ui_Form):
         self.child.show()
 
 
-#继承Ui_Form
+#inherit Ui_Form
 class WaitPage(QtWidgets.QMainWindow, WaitPage.Ui_Form):
     def __init__(self, ):
         super().__init__()
