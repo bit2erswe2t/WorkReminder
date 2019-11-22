@@ -22,3 +22,10 @@ git clone ProjectAddress
 pip install PyQt5
 ```
 * python3 main.py
+
+# Package exe
+```sh
+#windows
+cd .\release
+pyinstaller -F -w ..\main.py
+```

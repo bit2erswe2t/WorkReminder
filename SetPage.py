@@ -65,7 +65,6 @@ class SetPage(QtWidgets.QMainWindow, uiSetPage.Ui_Setting):
             self.time.stop()
             if self.lineEdit_2.text() != '':
                 self.hide()
-                self.child.show()   
                 self.child.startBreak(self.lineEdit_2.text()) 
             self.isTimeStart = False
 
