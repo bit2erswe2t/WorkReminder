@@ -42,19 +42,8 @@ class WaitPage(QtWidgets.QMainWindow, uiWaitPage.Ui_Waitting):
         
     def setTime(self, time):
         self.startTime = QDateTime.currentMSecsSinceEpoch()
-        if '：' in time:
-            timeSplit = [int(x) for x in time.split('：')]
-        else:
-            timeSplit = [int(x) for x in time.split(':')]
-        splitLen = len(timeSplit)
-        if splitLen == 3:
-            self.breakTime = 1000*(timeSplit[0]*60*60 + timeSplit[1]*60 + timeSplit[2])
-        if splitLen == 2:
-            self.breakTime = 1000*(timeSplit[0]*60 + timeSplit[1])
-        if splitLen == 1:
-            self.breakTime = timeSplit[0] * 1000
-        self.lcdDisplay(self.breakTime)
-        self.breakTime += 1000
+        self.lcdDisplay(time)
+        self.breakTime = time + 1000
         self.time.start()
 
     def lcdDisplay(self, interval):
@@ -79,6 +68,17 @@ class WaitPage(QtWidgets.QMainWindow, uiWaitPage.Ui_Waitting):
         else:
             self.time.stop()
             self.hide()
-            self.parent.show()            
+            self.parent.show() 
+            if(self.parent.workCount>=0):
+                print("testteat")
+                if(self.parent.workCount == 0):
+                    self.parent.workTime = self.parent.restTime[0]
+                    self.parent.setTime(self.parent.workTime) 
+                else:
+                    self.parent.setTime(self.parent.workTime - 1000)
+                self.parent.workCount -= 1
+            if(self.parent.workCount == -1):
+                self.parent.isTimeStart = False
+            
 
         

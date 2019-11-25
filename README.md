@@ -2,6 +2,8 @@
 
 # Design
 
+add over button 
+
 set work time(45m) and break time(5m) 
 -> 
 start 

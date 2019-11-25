@@ -1,6 +1,6 @@
 import uiSetPage
 from PyQt5 import QtWidgets,QtCore,QtGui
-from PyQt5.QtCore import QTimer,QDateTime,QDate,Qt 
+from PyQt5.QtCore import QTimer,QDateTime,QDate,Qt,QTime
 
 class SetPage(QtWidgets.QMainWindow, uiSetPage.Ui_Setting):
     def __init__(self):
@@ -12,34 +12,81 @@ class SetPage(QtWidgets.QMainWindow, uiSetPage.Ui_Setting):
         self.time = QTimer(self)
         self.time.setInterval(100)
         self.time.timeout.connect(self.startWork)
+        self.waitStartTime = QTimer(self)
+        self.waitStartTime.setInterval(100)
+        self.waitStartTime.timeout.connect(self.waitStartTimeSlot)
         self.workTime = 0
+        self.breakTime = 0
         self.startTime = 0
         self.endTime = 0
         self.isTimeStart = False
+        self.workStartTime = None
+        self.workEndTime = None
+        self.toStart = 0
+        self.workCount = 0
+        self.restTime = [0,0]
 
     def child(self, child):
         self.child = child
 
-    def slot_btn_function(self):
-        if self.lineEdit.text() != '' and not self.isTimeStart:
-            self.isTimeStart = True
-            self.setTime(self.lineEdit.text())
+    def timeDistribute(self):
+        self.isTimeStart = True
+        self.toStart = QTime.currentTime().msecsTo(self.workStartTime)
+        if(self.toStart >= 0):
+            self.waitStartTime.start()
+        else:
+            self.workAndBreak()
 
-    def setTime(self, time):
-        self.startTime = QDateTime.currentMSecsSinceEpoch()
+    def workAndBreak(self):
+        diff = QTime.currentTime().msecsTo(self.workEndTime)
+        mod = diff % (self.workTime + self.breakTime)
+        self.workCount = diff//(self.workTime + self.breakTime)
+        print(self.workCount, mod)
+        if(mod != 0):
+            self.restTime[0] = int(mod * (self.workTime/(self.workTime + self.breakTime)))
+            self.restTime[1] = mod - self.restTime[0]
+        else:
+            self.restTime[0] = self.workTime
+            self.restTime[1] = self.breakTime
+        if(self.workCount==0):
+            self.workTime, self.breakTime = self.restTime
+        self.setTime(self.workTime)
+
+    def waitStartTimeSlot(self):
+        self.toStart = QTime.currentTime().msecsTo(self.workStartTime)
+        if self.toStart <= 0:
+            self.waitStartTime.stop()
+            self.workAndBreak()
+    
+    def slot_btn_function(self):
+        if self.timeEdit.text() != '0:00' and self.timeEdit_2.text() != '0:00' \
+            and self.lineEdit.text() != ''  and self.lineEdit_2.text() != '' \
+            and not self.isTimeStart:
+            self.workTime = self.inputTimePross(self.lineEdit.text())
+            self.breakTime = self.inputTimePross(self.lineEdit_2.text())
+            self.workStartTime = self.timeEdit.time()
+            self.workEndTime = self.timeEdit_2.time()
+            self.timeDistribute()
+
+    def inputTimePross(self, time):
+        msecs = 0
         if '：' in time:
             timeSplit = [int(x) for x in time.split('：')]
         else:
             timeSplit = [int(x) for x in time.split(':')]
         splitLen = len(timeSplit)
         if splitLen == 3:
-            self.workTime = 1000*(timeSplit[0]*60*60 + timeSplit[1]*60 + timeSplit[2])
+            msecs = 1000*(timeSplit[0]*60*60 + timeSplit[1]*60 + timeSplit[2])
         if splitLen == 2:
-            self.workTime = 1000*(timeSplit[0]*60 + timeSplit[1])
+            msecs = 1000*(timeSplit[0]*60 + timeSplit[1])
         if splitLen == 1:
-            self.workTime = timeSplit[0] * 1000
-        self.lcdDisplay(self.workTime)
-        self.workTime += 1000
+            msecs = timeSplit[0] * 1000
+        return msecs
+
+    def setTime(self, time):
+        self.startTime = QDateTime.currentMSecsSinceEpoch()
+        self.lcdDisplay(time)
+        self.workTime = time + 1000
         self.time.start()
 
     def lcdDisplay(self, interval):
@@ -63,10 +110,12 @@ class SetPage(QtWidgets.QMainWindow, uiSetPage.Ui_Setting):
             self.lcdDisplay(interval)
         else:
             self.time.stop()
-            if self.lineEdit_2.text() != '':
-                self.hide()
-                self.child.startBreak(self.lineEdit_2.text()) 
-            self.isTimeStart = False
+            self.hide()
+            if(self.workCount == 1):
+                self.child.startBreak(self.restTime[1])
+            else:
+                self.child.startBreak(self.breakTime)
+
 
     
         
