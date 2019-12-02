@@ -1,8 +1,6 @@
 > Beginner project, OJ ignore
 
-# Design
-
-add over button 
+### Design
 
 set work time(45m) and break time(5m) 
 -> 
@@ -12,7 +10,7 @@ When time is up, pop-up window fill all screen.
 ->
 back set menu
 
-# Run code
+### Run code
 
 * git clone project
 ```sh
@@ -25,9 +23,15 @@ pip install PyQt5
 ```
 * python3 main.py
 
-# Package exe
+### Package exe
 ```sh
 #windows
 cd .\release
 pyinstaller -F -w ..\main.py
 ```
+
+### Future
+
+* add over button 
+* add work time display lcd
+* add to start work display lcd

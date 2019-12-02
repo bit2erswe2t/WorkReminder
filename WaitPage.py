@@ -38,7 +38,6 @@ class WaitPage(QtWidgets.QMainWindow, uiWaitPage.Ui_Waitting):
     def startBreak(self, breakTime):
         self.setTime(breakTime)
         self.showFullScreen()
-        #QTimer.singleShot(0, self.showFullScreen)
         
     def setTime(self, time):
         self.startTime = QDateTime.currentMSecsSinceEpoch()
@@ -69,16 +68,13 @@ class WaitPage(QtWidgets.QMainWindow, uiWaitPage.Ui_Waitting):
             self.time.stop()
             self.hide()
             self.parent.show() 
-            if(self.parent.workCount>=0):
-                print("testteat")
-                if(self.parent.workCount == 0):
-                    self.parent.workTime = self.parent.restTime[0]
-                    self.parent.setTime(self.parent.workTime) 
-                else:
-                    self.parent.setTime(self.parent.workTime - 1000)
-                self.parent.workCount -= 1
-            if(self.parent.workCount == -1):
+            if(self.parent.workCount>1):
+                self.parent.setTime(self.parent.workTime - 1000)
+            elif(self.parent.workCount == 1):
+                self.parent.setTime(self.parent.restTime[0])
+            else:
                 self.parent.isTimeStart = False
+            self.parent.workCount -= 1
             
 
         

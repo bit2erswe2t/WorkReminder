@@ -28,5 +28,5 @@ missing module named 'java.lang' - imported by platform (delayed, optional), Z:\
 missing module named vms_lib - imported by platform (delayed, conditional, optional), Z:\Work\WorkReminder\main.py (top-level)
 missing module named termios - imported by tty (top-level), Z:\Work\WorkReminder\main.py (top-level), getpass (optional)
 missing module named grp - imported by shutil (optional), tarfile (optional), Z:\Work\WorkReminder\main.py (top-level)
-missing module named pwd - imported by posixpath (delayed, conditional), shutil (optional), tarfile (optional), http.server (delayed, optional), webbrowser (delayed), Z:\Work\WorkReminder\main.py (top-level), netrc (delayed, conditional), getpass (delayed)
 missing module named org - imported by copy (optional), Z:\Work\WorkReminder\main.py (top-level)
+missing module named pwd - imported by posixpath (delayed, conditional), shutil (optional), tarfile (optional), http.server (delayed, optional), webbrowser (delayed), Z:\Work\WorkReminder\main.py (top-level), netrc (delayed, conditional), getpass (delayed)
