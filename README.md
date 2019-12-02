@@ -2,13 +2,14 @@
 
 ### Design
 
-set work time(45m) and break time(5m) 
+Set the time when a work start and end.
+Set work time(45m) and break time(5m).
 -> 
-start 
+Start.
 -> 
-When time is up, pop-up window fill all screen.
+When work time exhaust, pop-up window fill all screen.
 ->
-back set menu
+Back set menu, repeat set.
 
 ### Run code
 
