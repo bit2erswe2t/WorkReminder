@@ -1,6 +1,7 @@
 import uiSetPage
 from PyQt5 import QtWidgets,QtCore,QtGui
 from PyQt5.QtCore import QTimer,QDateTime,QDate,Qt,QTime
+from PyQt5.QtWidgets import QLCDNumber
 
 class SetPage(QtWidgets.QMainWindow, uiSetPage.Ui_Setting):
     def __init__(self):
@@ -27,7 +28,13 @@ class SetPage(QtWidgets.QMainWindow, uiSetPage.Ui_Setting):
         self.toStart = 0
         self.workCount = 0
         self.restTime = [0,0]
-
+        self.lcd_Work.setSegmentStyle(QLCDNumber.Flat)
+        self.lcd_ToStart.setSegmentStyle(QLCDNumber.Flat)
+        self.lcd_Work.setStyleSheet("border: none; color: black;")
+        self.lcd_ToStart.setStyleSheet("border: none; color: black;")
+        self.lcd_Work.display("00:00:00")
+        self.lcd_ToStart.display("00:00:00")
+        
     def child(self, child):
         self.child = child
     
@@ -71,6 +78,8 @@ class SetPage(QtWidgets.QMainWindow, uiSetPage.Ui_Setting):
         if self.toStart <= 0:
             self.waitStartTime.stop()
             self.workAndBreak()
+        else:
+            self.lcdDisplay(self.toStart, 1)
 
     def workAndBreak(self):
         diff = abs(self.workEndTime.msecsTo(QTime.currentTime()))
@@ -91,11 +100,11 @@ class SetPage(QtWidgets.QMainWindow, uiSetPage.Ui_Setting):
 
     def setTime(self, time):
         self.startTime = QDateTime.currentMSecsSinceEpoch()
-        self.lcdDisplay(time)
+        self.lcdDisplay(time, 2)
         self.workTime = time + 1000
         self.time.start()
 
-    def lcdDisplay(self, interval):
+    def lcdDisplay(self, interval, lcdnum):
         hour = interval // (60 * 60 * 1000)
         minu = (interval - hour * 60 * 60 * 1000) // (60 * 1000)
         sec = (interval - hour * 60 * 60 * 1000 - minu * 60 * 1000) // 1000
@@ -106,14 +115,17 @@ class SetPage(QtWidgets.QMainWindow, uiSetPage.Ui_Setting):
         if sec<10:
             sec = '0' + str(sec)
         intervals = str(hour) + ':' + str(minu) + ':' + str(sec)
-        self.label_4.setText(intervals)
+        if(lcdnum==1):
+            self.lcd_ToStart.display(intervals)
+        else:
+            self.lcd_Work.display(intervals)
 
     def startWork(self):
         self.endTime = QDateTime.currentMSecsSinceEpoch()
         interval = self.endTime - self.startTime
         if interval <= self.workTime:
             interval = self.workTime - interval
-            self.lcdDisplay(interval)
+            self.lcdDisplay(interval, 2)
         else:
             self.time.stop()
             self.hide()

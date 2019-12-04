@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>466</width>
-    <height>172</height>
+    <width>448</width>
+    <height>225</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -66,7 +66,7 @@
    <property name="geometry">
     <rect>
      <x>160</x>
-     <y>110</y>
+     <y>160</y>
      <width>114</width>
      <height>32</height>
     </rect>
@@ -119,6 +119,58 @@
      <width>80</width>
      <height>21</height>
     </rect>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="lcd_ToStart">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>110</y>
+     <width>101</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="digitCount">
+    <number>12</number>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="lcd_Work">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>110</y>
+     <width>101</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="digitCount">
+    <number>12</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>110</y>
+     <width>51</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Ready</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>110</y>
+     <width>81</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Work </string>
    </property>
   </widget>
  </widget>
