@@ -1,13 +1,15 @@
 import uiWaitPage
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QTimer,QDateTime,QDate,Qt
+from PyQt5.QtCore import QTimer,QDateTime,Qt
 from PyQt5.QtWidgets import QLCDNumber,QApplication
+from PyQt5.QtGui import QIcon
 
 #inherit Ui_Waitting
 class WaitPage(QtWidgets.QMainWindow, uiWaitPage.Ui_Waitting):
-    def __init__(self, ):
+    def __init__(self, imgName):
         super().__init__()
         self.setupUi(self)
+        self.setWindowIcon(QIcon(imgName))
         self.time = QTimer(self)
         self.time.setInterval(100)
         self.time.timeout.connect(self.refresh)

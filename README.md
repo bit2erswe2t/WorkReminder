@@ -2,14 +2,11 @@
 
 ### Design
 
-Set the time when a work start and end.
-Set work time(45m) and break time(5m).
--> 
-Start.
--> 
-When work time exhaust, pop-up window fill all screen.
-->
-Back set menu, repeat set.
+Set the time when a work start and end(9:00 and 11:30).
+Set work time(30:00\45, thirty minutes or fouty-five seconds) and break time(3:00\5, three minutes or five seconds).<br>
+->Start.<br>
+->When work time exhaust, pop-up window fill all screen.<br>
+->Back set menu, repeat set.
 
 ### Run code
 
@@ -28,11 +25,11 @@ pip install PyQt5
 ```sh
 #windows
 cd .\release
-pyinstaller -F -w ..\main.py
+#windows icon need four size icons to combine a icon file. Generate "coffee.ico" with "Greenfish Icon Editor".
+#-F: one file -w: no console -i: add icon
+pyinstaller -F -w -i ..\coffee.ico ..\main.py
 ```
 
 ### Future
 
 * add over button 
-* add work time display lcd
-* add to start work display lcd

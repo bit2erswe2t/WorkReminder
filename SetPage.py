@@ -1,15 +1,17 @@
 import uiSetPage
-from PyQt5 import QtWidgets,QtCore,QtGui
-from PyQt5.QtCore import QTimer,QDateTime,QDate,Qt,QTime
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import QTimer,QDateTime,QTime
 from PyQt5.QtWidgets import QLCDNumber
+from PyQt5.QtGui import QIcon
 
 class SetPage(QtWidgets.QMainWindow, uiSetPage.Ui_Setting):
-    def __init__(self):
+    def __init__(self, imgName):
         super().__init__()
         self.setupUi(self)
-        self.pushButton.clicked.connect(self.slot_btn_function)  
-        self.lineEdit.setText('50')
-        self.lineEdit_2.setText('12')
+        self.setWindowIcon(QIcon(imgName))
+        self.pushButton.clicked.connect(self.startBtnSlot)  
+        self.lineEdit.setText('2:00')
+        self.lineEdit_2.setText('1:00')
         self.timeEdit.setTime(QTime(15,22))
         self.timeEdit_2.setTime(QTime(15,25))
         self.time = QTimer(self)
@@ -53,7 +55,7 @@ class SetPage(QtWidgets.QMainWindow, uiSetPage.Ui_Setting):
             msecs = timeSplit[0] * 1000
         return msecs
 
-    def slot_btn_function(self):
+    def startBtnSlot(self):
         if self.timeEdit.text() != '0:00' and self.timeEdit_2.text() != '0:00' \
             and self.lineEdit.text() != ''  and self.lineEdit_2.text() != '' \
             and not self.isTimeStart:
@@ -83,10 +85,8 @@ class SetPage(QtWidgets.QMainWindow, uiSetPage.Ui_Setting):
 
     def workAndBreak(self):
         diff = abs(self.workEndTime.msecsTo(QTime.currentTime()))
-        #diff = abs(self.workStartTime.msecsTo(self.workEndTime))
         mod = diff % (self.workTime + self.breakTime)
         self.workCount = diff//(self.workTime + self.breakTime)
-        #print("workcount", diff, self.workCount, mod)
         if(mod != 0):
             self.restTime[0] = int((mod * (self.workTime/(self.workTime + self.breakTime)))/1000)*1000
             self.restTime[1] = int((mod - self.restTime[0])/1000)*1000
@@ -95,7 +95,6 @@ class SetPage(QtWidgets.QMainWindow, uiSetPage.Ui_Setting):
             self.restTime[1] = 0
         if(self.workCount==0):
             self.workTime, self.breakTime = self.restTime
-        #print("rest:",self.restTime)
         self.setTime(self.workTime)
 
     def setTime(self, time):
