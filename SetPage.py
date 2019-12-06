@@ -8,102 +8,76 @@ class SetPage(QtWidgets.QMainWindow, uiSetPage.Ui_Setting):
     def __init__(self, imgName):
         super().__init__()
         self.setupUi(self)
-        self.setWindowIcon(QIcon(imgName))
-        self.pushButton.clicked.connect(self.startBtnSlot)  
-        self.lineEdit.setText('2:00')
-        self.lineEdit_2.setText('1:00')
-        self.timeEdit.setTime(QTime(15,22))
-        self.timeEdit_2.setTime(QTime(15,25))
-        self.time = QTimer(self)
-        self.time.setInterval(100)
-        self.time.timeout.connect(self.startWork)
-        self.waitStartTime = QTimer(self)
-        self.waitStartTime.setInterval(100)
-        self.waitStartTime.timeout.connect(self.waitStartTimeSlot)
-        self.workTime = 0
-        self.breakTime = 0
-        self.startTime = 0
-        self.endTime = 0
-        self.isTimeStart = False
-        self.workStartTime = None
-        self.workEndTime = None
-        self.toStart = 0
-        self.workCount = 0
-        self.restTime = [0,0]
-        self.lcd_Work.setSegmentStyle(QLCDNumber.Flat)
-        self.lcd_ToStart.setSegmentStyle(QLCDNumber.Flat)
-        self.lcd_Work.setStyleSheet("border: none; color: black;")
-        self.lcd_ToStart.setStyleSheet("border: none; color: black;")
-        self.lcd_Work.display("00:00:00")
-        self.lcd_ToStart.display("00:00:00")
+        self.init(imgName)
         
-    def child(self, child):
+    def init(self,imgName):
+        self.setWindowIcon(QIcon(imgName))
+        self.btnStart.clicked.connect(self.btnStartSlot)  
+        self.lineEditWorktime.setText('2:00')
+        self.lineEditBreaktime.setText('1:00')
+        self.timeEditStart.setTime(QTime(15,22))
+        self.timeEditEnd.setTime(QTime(15,25))
+        self.lcdWork.setSegmentStyle(QLCDNumber.Flat)
+        self.lcdWork.setStyleSheet("border: none; color: black;")
+        self.lcdWork.display("00:00:00")
+        self.lcdReady.setSegmentStyle(QLCDNumber.Flat)
+        self.lcdReady.setStyleSheet("border: none; color: black;")
+        self.lcdReady.display("00:00:00")
+
+        self.workTimer = QTimer(self)
+        self.workTimer.setInterval(100)
+        self.workTimer.timeout.connect(self.workTimerSlot)
+
+        self.waitTimer = QTimer(self)
+        self.waitTimer.setInterval(100)
+        self.waitTimer.timeout.connect(self.waitTimerSlot)
+
+        self.isOnBtnStart = False
+        self.cyclesNum = 0
+        self.remainderTime = [0,0]
+
+        self.workInterval = 0
+        self.breakInterval = 0
+        self.readyInterval = 0
+
+        self.workStartMoment = 0
+        self.cyclesStartMoment = None
+        self.cyclesEndMoment = None
+
+    def setChild(self, child):
         self.child = child
     
-    def inputTimePross(self, time):
+    def getChild(self):
+        return self.child
+
+    def hms2Msec(self, time):
         msecs = 0
         if '：' in time:
-            timeSplit = [int(x) for x in time.split('：')]
+            timeArr = [int(x) for x in time.split('：')]
         else:
-            timeSplit = [int(x) for x in time.split(':')]
-        splitLen = len(timeSplit)
-        if splitLen == 3:
-            msecs = 1000*(timeSplit[0]*60*60 + timeSplit[1]*60 + timeSplit[2])
-        if splitLen == 2:
-            msecs = 1000*(timeSplit[0]*60 + timeSplit[1])
-        if splitLen == 1:
-            msecs = timeSplit[0] * 1000
+            timeArr = [int(x) for x in time.split(':')]
+        arrLen = len(timeArr)
+        if arrLen == 3:
+            msecs = 1000*(timeArr[0]*60*60 + timeArr[1]*60 + timeArr[2])
+        if arrLen == 2:
+            msecs = 1000*(timeArr[0]*60 + timeArr[1])
+        if arrLen == 1:
+            msecs = timeArr[0] * 1000
         return msecs
 
-    def startBtnSlot(self):
-        if self.timeEdit.text() != '0:00' and self.timeEdit_2.text() != '0:00' \
-            and self.lineEdit.text() != ''  and self.lineEdit_2.text() != '' \
-            and not self.isTimeStart:
-            self.workTime = self.inputTimePross(self.lineEdit.text())
-            self.breakTime = self.inputTimePross(self.lineEdit_2.text())
-            self.workStartTime = self.timeEdit.time()
-            self.workEndTime = self.timeEdit_2.time()
-            self.timeDistribute()
-        else:
-            pass
+    def getInput(self):
+        self.workInterval = self.hms2Msec(self.lineEditWorktime.text())
+        self.breakInterval = self.hms2Msec(self.lineEditBreaktime.text())
+        self.cyclesStartMoment = self.timeEditStart.time()
+        self.cyclesEndMoment = self.timeEditEnd.time()
+    
+    def checkInput(self):
+        return self.timeEditStart.text() != '0:00' \
+            and self.timeEditEnd.text() != '0:00' \
+            and self.lineEditWorktime.text() != ''\
+            and self.lineEditBreaktime.text() != ''
 
-    def timeDistribute(self):
-        self.isTimeStart = True
-        self.toStart = QTime.currentTime().msecsTo(self.workStartTime)
-        if(self.toStart >= 0):
-            self.waitStartTime.start()
-        else:
-            self.workAndBreak()
-
-    def waitStartTimeSlot(self):
-        self.toStart = QTime.currentTime().msecsTo(self.workStartTime)
-        if self.toStart <= 0:
-            self.waitStartTime.stop()
-            self.workAndBreak()
-        else:
-            self.lcdDisplay(self.toStart, 1)
-
-    def workAndBreak(self):
-        diff = abs(self.workEndTime.msecsTo(QTime.currentTime()))
-        mod = diff % (self.workTime + self.breakTime)
-        self.workCount = diff//(self.workTime + self.breakTime)
-        if(mod != 0):
-            self.restTime[0] = int((mod * (self.workTime/(self.workTime + self.breakTime)))/1000)*1000
-            self.restTime[1] = int((mod - self.restTime[0])/1000)*1000
-        else:
-            self.restTime[0] = 0
-            self.restTime[1] = 0
-        if(self.workCount==0):
-            self.workTime, self.breakTime = self.restTime
-        self.setTime(self.workTime)
-
-    def setTime(self, time):
-        self.startTime = QDateTime.currentMSecsSinceEpoch()
-        self.lcdDisplay(time, 2)
-        self.workTime = time + 1000
-        self.time.start()
-
-    def lcdDisplay(self, interval, lcdnum):
+    def displayLCD(self, interval, lcdChoice):
         hour = interval // (60 * 60 * 1000)
         minu = (interval - hour * 60 * 60 * 1000) // (60 * 1000)
         sec = (interval - hour * 60 * 60 * 1000 - minu * 60 * 1000) // 1000
@@ -114,25 +88,63 @@ class SetPage(QtWidgets.QMainWindow, uiSetPage.Ui_Setting):
         if sec<10:
             sec = '0' + str(sec)
         intervals = str(hour) + ':' + str(minu) + ':' + str(sec)
-        if(lcdnum==1):
-            self.lcd_ToStart.display(intervals)
+        if(lcdChoice==1):
+            self.lcdReady.display(intervals)
         else:
-            self.lcd_Work.display(intervals)
+            self.lcdWork.display(intervals)
+    
+    def btnStartSlot(self):
+        if self.checkInput() and not self.isOnBtnStart:
+            self.isOnBtnStart = True 
+            self.getInput()
+            self.readyInterval = QTime.currentTime().msecsTo(self.cyclesStartMoment)
+            if(self.readyInterval >= 0):
+                self.waitTimer.start()
+            else:
+                self.startWork()
+        else:
+            pass
+        
+    def waitTimerSlot(self):
+        self.readyInterval = QTime.currentTime().msecsTo(self.cyclesStartMoment)
+        if self.readyInterval <= 0:
+            self.waitTimer.stop()
+            self.startWork()
+        else:
+            self.displayLCD(self.readyInterval, 1)
+
+    def workTimerSlot(self):
+        interval = QDateTime.currentMSecsSinceEpoch() - self.workStartMoment
+        remainder = self.workInterval - interval
+        if 0 <= remainder:
+            self.displayLCD(remainder, 2)
+        else:
+            self.workTimer.stop()
+            self.hide()
+            if(self.cyclesNum == 0):
+                self.child.startBreak(self.remainderTime[1])
+            else:
+                self.child.startBreak(self.breakInterval)
 
     def startWork(self):
-        self.endTime = QDateTime.currentMSecsSinceEpoch()
-        interval = self.endTime - self.startTime
-        if interval <= self.workTime:
-            interval = self.workTime - interval
-            self.lcdDisplay(interval, 2)
+        diff = abs(self.cyclesEndMoment.msecsTo(QTime.currentTime()))
+        mod = diff % (self.workInterval + self.breakInterval)
+        self.cyclesNum = diff//(self.workInterval + self.breakInterval)
+        if(mod != 0):
+            self.remainderTime[0] = int((mod * (self.workInterval/(self.workInterval + self.breakInterval)))/1000)*1000
+            self.remainderTime[1] = int((mod - self.remainderTime[0])/1000)*1000
         else:
-            self.time.stop()
-            self.hide()
-            if(self.workCount == 0):
-                self.child.startBreak(self.restTime[1])
-            else:
-                self.child.startBreak(self.breakTime)
-
-
+            self.remainderTime[0] = 0
+            self.remainderTime[1] = 0
+        if(self.cyclesNum == 0):
+            self.workInterval, self.breakInterval = self.remainderTime
+        #Start workTimer
+        self.startWorkTimer()
+    
+    def startWorkTimer(self, time):
+        self.workStartMoment = QDateTime.currentMSecsSinceEpoch()
+        self.displayLCD(time, 2)
+        self.workInterval = time + 1000 #Guarantee count down from your set time
+        self.workTimer.start()
     
         

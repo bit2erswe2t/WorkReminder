@@ -6,14 +6,14 @@ from coffeeico import img
 
 def main():
     imgName = 'coffeeTemp.ico'
-    tmp = open(imgName, 'wb')
-    tmp.write(base64.b64decode(img))
-    tmp.close()
+    imgTemp = open(imgName, 'wb')
+    imgTemp.write(base64.b64decode(img))
+    imgTemp.close()
     app = QApplication([])
     setPage = SetPage(imgName)
     waitPage = WaitPage(imgName)
-    setPage.child(waitPage)
-    waitPage.parent(setPage)
+    setPage.setChild(waitPage)
+    waitPage.setParent(setPage)
     setPage.show()
     app.exec_()
     os.remove('coffeeTemp.ico')

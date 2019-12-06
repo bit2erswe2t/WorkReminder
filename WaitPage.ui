@@ -16,20 +16,20 @@
   <property name="windowOpacity">
    <double>1.000000000000000</double>
   </property>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="labelTip">
    <property name="geometry">
     <rect>
-     <x>140</x>
-     <y>100</y>
-     <width>121</width>
-     <height>31</height>
+     <x>110</x>
+     <y>80</y>
+     <width>200</width>
+     <height>100</height>
     </rect>
    </property>
    <property name="text">
     <string>Have a break...</string>
    </property>
   </widget>
-  <widget class="QLCDNumber" name="lcdNumber">
+  <widget class="QLCDNumber" name="lcdCountDown">
    <property name="geometry">
     <rect>
      <x>120</x>

@@ -13,19 +13,19 @@ class Ui_Waitting(object):
         Waitting.setObjectName("Waitting")
         Waitting.resize(400, 300)
         Waitting.setWindowOpacity(1.0)
-        self.label = QtWidgets.QLabel(Waitting)
-        self.label.setGeometry(QtCore.QRect(140, 100, 121, 31))
-        self.label.setObjectName("label")
-        self.lcdNumber = QtWidgets.QLCDNumber(Waitting)
-        self.lcdNumber.setGeometry(QtCore.QRect(120, 160, 141, 21))
-        self.lcdNumber.setDigitCount(12)
-        self.lcdNumber.setObjectName("lcdNumber")
+        self.labelTipTip = QtWidgets.QLabel(Waitting)
+        self.labelTipTip.setGeometry(QtCore.QRect(140, 100, 121, 31))
+        self.labelTipTip.setObjectName("labelTip")
+        self.lcdCountDown = QtWidgets.QLCDNumber(Waitting)
+        self.lcdCountDown.setGeometry(QtCore.QRect(120, 160, 141, 21))
+        self.lcdCountDown.setDigitCount(12)
+        self.lcdCountDown.setObjectName("lcdCountDown")
 
         self.retranslateUi(Waitting)
         QtCore.QMetaObject.connectSlotsByName(Waitting)
 
     def retranslateUi(self, Waitting):
         _translate = QtCore.QCoreApplication.translate
-        Waitting.setWindowTitle(_translate("Waitting", "Waitting"))
-        self.label.setText(_translate("Waitting", "Have a break..."))
+        WaittlabelTipetWindowTitle(_translate("Waitting", "Waitting"))
+        self.labelTip.setText(_translate("Waitting", "Have a break..."))
 
